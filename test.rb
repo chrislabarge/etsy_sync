@@ -39,32 +39,36 @@ end
 
 class Product
   attr_accessor :etsy_image_url
+  attr_accessor :title
+  attr_accessor :description
+  attr_accessor :url
+  attr_accessor :price
+  attr_accessor :image
 
   def initialize(listing)
-    @obj = format(listing)
+    data = listing.result
+
+    @title = data["title"]
+    @description = data["description"]
+    @url = data["url"]
+    @price = data["price"].to_s
+    @image = image
   end
 
   def format(listing)
-    image = image_url(listing)
-    date = Time.now.to_s
-
-    {title: listing.title,
-     description: listing.description,
-     date: date,
-     etsyLink: listing.url,
-     price: price,
-     weight: 2,
-     image: image}  
+    @date = date
+    @weight = 2
   end
 
   def image_url(listing)
     set_etsy_image(listing)
     
-    name = URI(@etsy_image_url).split('/').last 
+    name = URI(@etsy_image_url).path.split('/').last 
     'img/' + name
   end
   
   def set_etsy_image(listing)
-    @etsy_image_url = listing.image.url_570xN
+    data = listing.image.result
+    @etsy_image_url = data["url_570xN"]
   end
 end

@@ -1,7 +1,9 @@
 require 'uri'
 require 'dotenv/load'
 require 'etsy'
-#if state is active then I will not want to sync.
+require_relative 'markdown_generator'
+require_relative 'image_downloader'
+#if state is NOT active then I will not want to sync.
 #title, description,  url price currency_code
 #tags.... the taxonomy would be better
 class EtsyApi
@@ -23,18 +25,6 @@ class EtsyApi
     limit = 5
     Etsy::Listing.find_all_by_shop_id(shop.id, limit: limit)
   end
-   
- # def get_shop(user)
- #   Etsy::Listing.find_all_by_shop_id(user)
- # end
-
-  def test
-    @client
-  end
-
-  def to_markdown(listing)
-     
-  end
 end
 
 class Product
@@ -47,6 +37,7 @@ class Product
 
   def initialize(listing)
     data = listing.result
+    image = image_url(listing)
 
     @title = data["title"]
     @description = data["description"]

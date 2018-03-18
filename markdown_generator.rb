@@ -7,17 +7,18 @@ class MarkdownGenerator
     filename = @product.title.downcase.gsub(' ', '_')
     date = Time.now.to_s
     
-    file = File.open('filename', 'w+')  
+    file = File.open(filename, 'w+')  
 
-    file << '---'
-    file << 'title: ' + @product.title
-    file << 'date: ' + date
-    file << 'description: ' + @product.description
-    file << 'etsyLink: ' + @product.url
-    file << 'price: ' + @product.price
-    file << 'image: ' + @product.image
-    file << 'weight: 2' 
-    file << '---'
+    file.puts '---'
+    file.puts 'title: ' + @product.title
+    file.puts 'date: ' + date
+    file.puts 'description: ' + @product.description
+    file.puts 'etsyLink: ' + @product.url
+    file.puts 'price: ' + @product.price
+    file.puts 'image: ' + @product.image
+    file.puts 'external_link: ""'
+    file.puts 'weight: 2' 
+    file.puts '---'
 
     file.close
   end

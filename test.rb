@@ -19,7 +19,7 @@ class EtsyApi
   def get_user(username)
     Etsy.user(username)
   end
-  
+
   def get_listing(user)
     shop = user.shop
     limit = 5
@@ -53,11 +53,11 @@ class Product
 
   def image_url(listing)
     set_etsy_image(listing)
-    
-    name = URI(@etsy_image_url).path.split('/').last 
+
+    name = URI(@etsy_image_url).path.split('/').last
     'img/' + name
   end
-  
+
   def set_etsy_image(listing)
     data = listing.image.result
     @etsy_image_url = data["url_570xN"]

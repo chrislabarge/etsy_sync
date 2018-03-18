@@ -4,10 +4,11 @@ class MarkdownGenerator
   end
 
   def generate
-    filename = @product.title.downcase.gsub(' ', '_')
+    filename = @product.title.downcase.gsub(' ', '_') + '.md'
+    path = ENV['SITE_PATH'] + 'content/products/' + filename
     date = Time.now.to_s
     
-    file = File.open(filename, 'w+')  
+    file = File.open(path, 'w+')  
 
     file.puts '---'
     file.puts 'title: ' + @product.title

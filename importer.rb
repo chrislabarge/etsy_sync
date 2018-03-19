@@ -23,6 +23,9 @@ class ProductSync
 
     return unless input == 'y'
 
+    listings = request_all_listings
+    products = generate_products listings
+
 #    mmore_listings = session.get_listing user, nil, 25
     #    I think i just need to keep checking offset until it doesnt equal it.
   end
@@ -33,13 +36,21 @@ class ProductSync
     offset = 25
     count = 0
     user = session.get_user ENV['ETSY_SHOP']
+    switch = true
 
-    while true
+    while switch
       listings = session.get_listing user, nil, count
       all_listings << listings
       count += offset
-      listings.count == offset ? true : false
+      switch = listings.count == offset
     end
+
     all_listings
+  end
+
+  def generate_products(listings)
+    listings.each do |listing|
+      category = @session.category listing, user
+    end
   end
 end

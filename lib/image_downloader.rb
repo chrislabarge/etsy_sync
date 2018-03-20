@@ -1,10 +1,10 @@
 require 'open-uri'
 
-class ImageDownload
+class ImageDownloader
   def initialize(product)
     @product = product
   end
-  
+
   def download
     @img_url = @product.etsy_image_url
     path = ENV['SITE_PATH'] + 'static/' + @product.image

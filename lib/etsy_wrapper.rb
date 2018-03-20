@@ -3,7 +3,9 @@ require 'etsy'
 #if state is NOT active then I will not want to sync.
 #title, description,  url price currency_code
 #tags.... the taxonomy would be better
-class EtsyApi
+class EtsyWrapper
+  attr_accessor :client
+
   def initialize
     @client = new_session
   end
@@ -21,7 +23,7 @@ class EtsyApi
     shop = user.shop
     options = {}
     options[:limit] = limit if limit
-    options[:offset] = offset if offset || offset > 0
+    options[:offset] = offset if offset
     Etsy::Listing.find_all_by_shop_id(shop.id, options)
   end
 
@@ -30,9 +32,12 @@ class EtsyApi
     Etsy::Section.find_by_shop(shop)
   end
 
-  def category(listing, user)
+  def get_category(listing, user)
     data = listing.result
     id = data['shop_section_id']
+
+    return 'Other' unless id
+
     @sections ||= get_sections(user)
     ids = @sections.map(&:id)
     index = ids.index(id)

@@ -1,4 +1,5 @@
 class Product
+  attr_accessor :id
   attr_accessor :etsy_image_url
   attr_accessor :category
   attr_accessor :title
@@ -11,6 +12,7 @@ class Product
     data = listing.result
     image = image_url(listing)
 
+    @id = data['listing_id']
     @title = data['title']
     @category = category
     @description = data['description']

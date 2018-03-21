@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    diffy (3.2.0)
     dotenv (2.2.1)
     etsy (0.3.2)
       json (>= 1.5.0)
@@ -15,6 +16,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  diffy
   dotenv
   etsy
   metadown

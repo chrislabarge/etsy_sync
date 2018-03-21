@@ -1,45 +1,41 @@
-class MarkdownGenerator
+require_relative 'sync_utilities'
+
+class MarkdownGenerator < SyncUtilities
   def initialize(product)
     @product = product
   end
 
   def product_metadata
+    @metadata ||= construct_metadata
+  end
+
+  def construct_metadata
     metadata = {}
     date = Time.now.to_s
 
     metadata['id'] = "#{@product.id}"
     metadata['title'] = "#{@product.title}"
-    #metadata['date'] = "#{date}"
+    metadata['date'] = "#{date}"
     metadata['description'] = "#{@product.description}"
     metadata['etsyLink'] = "#{@product.url}"
-    metadata['price'] = @product.price
+    metadata['price'] = "%.2f" % @product.price
     metadata['image'] = "#{@product.image}"
     metadata['catergory'] = "#{@product.category}"
-    metadata['external_link'] = '""'
     metadata['weight'] = 2
 
     metadata
   end
 
   def generate
-    #handle the date on generation, dont include in the sync
-    filename = @product.title.downcase.tr(' ', '_') + '.md'
-    path = ENV['SITE_PATH'] + 'content/products/' + filename
-    date = Time.now.to_s
-
+    path = file_path(@product.title)
+    Log.this @product.title
+    Log.this path
     file = File.open(path, 'w+')
 
     file.puts '---'
-    file.puts 'id: ' + "'#{@product.id}'"
-    file.puts 'title: ' + "'#{@product.title}'"
-    file.puts 'date: ' + "'#{date}'"
-    file.puts 'description: ' + "'#{@product.description}'"
-    file.puts 'etsyLink: ' + "'#{@product.url}'"
-    file.puts 'price: ' + @product.price
-    file.puts 'image: ' + "'#{@product.image}'"
-    file.puts 'catergory: ' + "'#{@product.category}'"
-    file.puts 'external_link: ""'
-    file.puts 'weight: 2'
+    product_metadata.each do |key, value|
+      file.puts "#{key}: '#{value}'"
+    end
     file.puts '---'
 
     file.close

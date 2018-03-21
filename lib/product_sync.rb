@@ -1,39 +1,78 @@
 require 'dotenv/load'
 require 'metadown'
+require 'diffy'
 require_relative 'etsy_wrapper.rb'
 require_relative 'product'
 require_relative 'importer'
 require_relative 'log'
+require_relative 'sync_utilities'
 require_relative 'markdown_generator'
 
-class ProductSync
+class ProductSync < SyncUtilities
   def initialize
     @service = EtsyWrapper.new
     @user = @service.get_user ENV['ETSY_SHOP']
   end
 
   def sync(option = nil)
-    load_existing_data
     listings = gather_listings option
-
-    #raise MarkdownGenerator.new(Product.new listings.first, @service.get_category(listings.first, @user)).product_metadata.inspect
     new_listings = find_new_listings listings
 
-    return Log.up_to_date if new_listings.empty?
+    if new_listings.empty?
+      Log.no_new
+    else
+      import_products_from new_listings
+    end
 
-    import_products_from new_listings
+    update_to listings
   end
 
-  def update_listing(listings)
+  def update_to(listings)
     products = generate_products listings
+    products.each { |product| update_old_product(product) }
 
-    products.each do |product|
-      generator = MarkdownGenerator.new product
+    Log.up_to_date
+  end
 
-      data = generator.product_metadata
-      existing = @existing_data.find { |old| old['id'] == data['id'] }
-      #now check the differences
+  def update_old_product(product)
+    return unless remove_old_product(product)
+
+    importer = Importer.new
+    importer.import_product product
+    Log.updated product.inspect
+  end
+
+  def remove_old_product(product)
+    generator = MarkdownGenerator.new product
+    data = generator.product_metadata
+    existing = @existing_data.find { |old| old['id'] == data['id'] }
+
+    return false unless existing && needs_update?(existing, data)
+
+    path = file_path(existing['title'])
+
+    Log.this existing['title']
+    Log.this path
+
+    FileUtils.rm path
+
+    true
+  end
+
+  def needs_update?(old, new)
+    old.find do |key, value|
+      next if key == 'date'
+      difference?(new[key].to_s, value.to_s)
     end
+  end
+
+  def difference?(val1, val2)
+
+    Diffy::Diff.new(remove_whitespace(val1), remove_whitespace(val2)).count > 0
+  end
+
+  def remove_whitespace(val)
+    val.gsub(/\s+/, "")
   end
 
   def gather_listings(option)
@@ -61,7 +100,6 @@ class ProductSync
     Dir.glob(ENV['SITE_PATH'] + 'content/products/*.md') do |file|
       f = open file
       data = Metadown.render(f.read)
-      raise data.metadata.inspect
 
       products << data.metadata
     end

@@ -23,6 +23,18 @@ class Log
     logger.info msg
   end
 
+  def self.updated(file)
+    msg = 'Updated the content for file: ' + file
+    STDOUT.puts msg
+    logger.info msg
+  end
+
+  def self.no_new
+    msg = 'There are no new listed products to download.'
+    STDOUT.puts msg
+    logger.info msg
+  end
+
   def self.import_logger
     Logger.new('./log/imported.log', 0, 5048576)
   end

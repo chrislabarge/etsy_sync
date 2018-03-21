@@ -30,7 +30,6 @@ class ProductSync < SyncUtilities
   def update_to(listings)
     products = generate_products listings
     products.each { |product| update_old_product(product) }
-
     Log.up_to_date
   end
 
@@ -97,7 +96,7 @@ class ProductSync < SyncUtilities
 
   def load_existing_data
     products = []
-    Dir.glob(ENV['SITE_PATH'] + 'content/products/*.md') do |file|
+    Dir.glob(file_path_prefix + '*.md') do |file|
       f = open file
       data = Metadown.render(f.read)
 
@@ -108,7 +107,7 @@ class ProductSync < SyncUtilities
   end
 
   def recent_listings(offest = 0)
-    @service.get_listing @user, nil, offest
+    @service.get_listings @user, nil, offest
   end
 
   def import_products_from(listings)

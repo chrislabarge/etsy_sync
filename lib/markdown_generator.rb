@@ -28,8 +28,6 @@ class MarkdownGenerator < SyncUtilities
 
   def generate
     path = file_path(@product.title)
-    Log.this @product.title
-    Log.this path
     file = File.open(path, 'w+')
 
     file.puts '---'

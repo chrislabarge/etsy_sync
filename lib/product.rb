@@ -12,12 +12,12 @@ class Product
     data = listing.result
     image = image_url(listing)
 
-    @id = data['listing_id']
-    @title = data['title']
+    @id = listing.id
+    @title = listing.title
     @category = category
-    @description = data['description']
-    @url = data['url']
-    @price = data['price'].to_s
+    @description = listing.description
+    @url = listing.url
+    @price = listing.price
     @image = image
   end
 

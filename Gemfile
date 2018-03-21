@@ -6,4 +6,5 @@ gem 'etsy'
 gem 'dotenv'
 gem 'metadown'
 gem 'diffy'
+gem 'rspec'
 

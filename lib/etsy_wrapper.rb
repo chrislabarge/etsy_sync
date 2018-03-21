@@ -19,7 +19,7 @@ class EtsyWrapper
     Etsy.user(username)
   end
 
-  def get_listing(user, limit = 5, offset = nil)
+  def get_listings(user, limit = 5, offset = nil)
     shop = user.shop
     options = {}
     options[:limit] = limit if limit

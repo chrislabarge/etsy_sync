@@ -42,8 +42,7 @@ class ProductSync < SyncUtilities
   end
 
   def remove_old_product(product)
-    generator = MarkdownGenerator.new product
-    data = generator.product_metadata
+    data = product.metadata
     existing = @existing_data.find { |old| old['id'] == data['id'] }
 
     return false unless existing && needs_update?(existing, data)

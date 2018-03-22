@@ -37,4 +37,25 @@ class Product
     data = listing.image.result
     @etsy_image_url = data['url_570xN']
   end
+
+  def metadata
+    @metadata ||= construct_metadata
+  end
+
+  def construct_metadata
+    metadata = {}
+    date = Time.now.to_s
+
+    metadata['id'] = @id
+    metadata['title'] = @title
+    metadata['date'] = @date
+    metadata['description'] = @description
+    metadata['etsyLink'] = @url
+    metadata['price'] = "%.2f" % @price
+    metadata['image'] = @image
+    metadata['catergory'] = @category
+    metadata['weight'] = 2
+
+    metadata
+  end
 end

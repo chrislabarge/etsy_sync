@@ -24,6 +24,7 @@ describe 'ProductSync' do
     allow_any_instance_of(MarkdownGenerator).to receive(:file_path_prefix) { prefix }
     allow_any_instance_of(Importer).to receive(:download_img) { true }
     allow(service_wrapper).to receive(:get_category) { category }
+    allow(service_wrapper).to receive(:request_all_listings) { [listing] }
     allow_any_instance_of(Product).to receive(:image_url) { 'example.com/picture.jpeg' }
     allow(Logger).to receive(:new) { logger }
     allow(Log).to receive(:up_to_date)
@@ -37,7 +38,7 @@ describe 'ProductSync' do
 
   context 'when there are no changes from the store service' do
     it 'Logs the up to date status message' do
-      allow(service_wrapper).to receive(:get_listings) { [listing] }
+      allow(service_wrapper).to receive(:request_all_listings) { [listing] }
 
       syncer = ProductSync.new
 

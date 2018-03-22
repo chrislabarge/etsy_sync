@@ -1,12 +1,12 @@
 require_relative 'sync_utilities'
 
-class MarkdownGenerator < SyncUtilities
+class MarkdownGenerator
   def initialize(product)
     @product = product
   end
 
   def generate
-    path = file_path(@product.title)
+    path = SyncUtilities.file_path(@product.title)
     file = File.open(path, 'w+')
 
     file.puts '---'

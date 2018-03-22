@@ -9,13 +9,21 @@ require_relative 'sync_utilities'
 require_relative 'markdown_generator'
 require_relative 'existing_files'
 
-class ProductSync < SyncUtilities
+class ProductSync
   def initialize
     @service = EtsyWrapper.new
   end
 
   def sync(option = nil)
     listings = gather_listings option
+
+    import_any_new listings
+    update_to listings
+  rescue => e
+    Log.error e
+  end
+
+  def import_any_new(listings)
     new_listings = find_new_listings listings
 
     if new_listings.empty?
@@ -23,8 +31,6 @@ class ProductSync < SyncUtilities
     else
       import_products_from new_listings
     end
-
-    update_to listings
   end
 
   def update_to(listings)
@@ -42,35 +48,22 @@ class ProductSync < SyncUtilities
   end
 
   def remove_old_product(product)
-    data = product.metadata
-    existing = @existing_data.find { |old| old['id'] == data['id'] }
+    path = find_update_path product
 
-    return false unless existing && needs_update?(existing, data)
-
-    path = file_path(existing['title'])
-
-    Log.this existing['title']
-    Log.this path
+    return unless path
 
     FileUtils.rm path
 
     true
   end
 
-  def needs_update?(old, new)
-    old.find do |key, value|
-      next if key == 'date'
-      difference?(new[key].to_s, value.to_s)
-    end
-  end
+  def find_update_path(product)
+    data = product.metadata
+    existing = @existing_data.find { |old| old['id'] == data['id'] }
 
-  def difference?(val1, val2)
+    return unless existing && SyncUtilities.needs_update?(existing, data)
 
-    Diffy::Diff.new(remove_whitespace(val1), remove_whitespace(val2)).count > 0
-  end
-
-  def remove_whitespace(val)
-    val.gsub(/\s+/, "")
+    SyncUtilities.file_path(existing['title'])
   end
 
   def gather_listings(option)
@@ -88,9 +81,9 @@ class ProductSync < SyncUtilities
   end
 
   def existing_ids
-    @existing_data ||= ExistingFiles.new.products
+    @existing_data ||= ExistingFiles.data
 
-    @existing_data.map { |data| puts data[:id]; data['id'] }
+    @existing_data.map { |data| data['id'] }
   end
 
   def import_products_from(listings)

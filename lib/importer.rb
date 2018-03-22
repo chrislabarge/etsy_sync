@@ -2,7 +2,7 @@ require_relative 'markdown_generator'
 require_relative 'image_downloader'
 require_relative 'sync_utilities'
 
-class Importer < SyncUtilities
+class Importer
   def import(products)
     imported_count = 0
 
@@ -29,7 +29,7 @@ class Importer < SyncUtilities
   end
 
   def download_img(product)
-    store_path = image_path(product.image)
+    store_path = SyncUtilities.image_path(product.image)
 
     return unless File.file?(store_path)
 

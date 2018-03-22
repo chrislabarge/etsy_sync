@@ -1,16 +1,18 @@
 require_relative 'sync_utilities'
 
-class ExistingFiles < SyncUtilities
-  attr_accessor :products
+class ExistingFiles
+  def self.data
+    products = []
 
-  def initialize
-    @products = []
+    path = SyncUtilities.file_path_prefix
 
-    Dir.glob(file_path_prefix + '*.md') do |file|
+    Dir.glob(path + '*.md') do |file|
       f = open file
       data = Metadown.render(f.read)
 
-      @products << data.metadata
+      products << data.metadata
     end
+
+    products
   end
 end

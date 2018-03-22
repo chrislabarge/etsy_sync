@@ -20,8 +20,7 @@ describe 'ProductSync' do
   before do
     allow(listing).to receive(:result) { result }
     allow(EtsyWrapper).to receive(:new) { service_wrapper }
-    allow_any_instance_of(ProductSync).to receive(:file_path_prefix) { prefix }
-    allow_any_instance_of(MarkdownGenerator).to receive(:file_path_prefix) { prefix }
+    allow(SyncUtilities).to receive(:file_path_prefix) { prefix }
     allow_any_instance_of(Importer).to receive(:download_img) { true }
     allow(service_wrapper).to receive(:get_category) { category }
     allow(service_wrapper).to receive(:request_all_listings) { [listing] }
@@ -60,11 +59,11 @@ describe 'ProductSync' do
 
       syncer.sync
 
-      actual = File.readlines(syncer.file_path(listing.title)).grep(/#{change}/).size > 0
+      actual = File.readlines(SyncUtilities.file_path(listing.title)).grep(/#{change}/).size > 0
 
+      expect(Log).to have_received(:no_new)
       expect(Log).to have_received(:up_to_date)
       expect(Log).to have_received(:updated)
-      expect(Log).to have_received(:no_new)
       expect(actual).to eq true
     end
   end

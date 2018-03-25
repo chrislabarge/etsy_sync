@@ -1,11 +1,6 @@
 class Product
-  #:attr_accessor :id
   attr_accessor :etsy_image_url
- # attr_accessor :category
   attr_accessor :title
- # attr_accessor :description
- # attr_accessor :url
- # attr_accessor :price
   attr_accessor :image
 
   def initialize(listing, category)

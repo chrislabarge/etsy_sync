@@ -31,7 +31,7 @@ class Importer
   def download_img(product)
     store_path = SyncUtilities.image_path(product.image)
 
-    return unless File.file?(store_path)
+    return if File.file?(store_path)
 
     downloader = ImageDownloader.new product
     downloader.download(store_path)

@@ -25,3 +25,8 @@ The code is currently designed for my specific use case, but if you have any nee
 - Automate the process of compiling to production and push the changes. One command bliss.
 - Allow for more generic use cases.
 - Rather then generating mardown, have it generate JSON or sanitize/format the incoming JSON from Etsy API to cut out acouple steps.
+
+## Author
+ Website: [ChrisLaBarge.com](http://chrislabarge.com)
+
+ Github: [github.com/chrislabarge](https://github.com/chrislabarge)

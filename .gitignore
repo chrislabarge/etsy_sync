@@ -2,3 +2,4 @@
 development/
 log/*
 spec/tmp/*
+config/
